@@ -61,13 +61,14 @@ class ExpenseViewer{
             for(Expense& exp:expenseList){
                 cout<<"Expense ID: "<<exp.getexpenseId()<<endl;
                 cout<<"Description: "<<exp.getDescription()<<endl;
-                cout<<"Total Amount: "<<exp.getAmount()<<endl;
+                cout<<"Total Amount: Rs"<<exp.getAmount()<<endl;
                 cout<<"Paid By: "<<exp.getPaidBy()<<endl;
                 cout<<"\n*************************************\n";
             }
         }
 };
 
+// Parent class for Future Extension
 class SplitLogic{
     public:
         virtual unordered_map<string,double>split(double amt,vector<string>& participants)=0;
@@ -177,20 +178,12 @@ int main(){
 
     int choice;
     while(true){
-        cout<<"\n 1. Add User \n 2. Add Expense \n 3. Show Expense \n 4. Show Balance \n 5. Exit\n";
+        cout<<"\n1. Add Expense \n2. Show Expense \n3. Show Balance \n4. Exit\n";
         cout<<"ENTER CHOICE: ";
         cin>>choice;
 
+        
         if(choice==1){
-            int id;
-            string name;
-            cout<<"Enter User ID: ";cin>>id;
-            cout<<"Enter Name: ";cin>>name;
-
-            manager.addUser(id,name);
-            cout<<"User Added Succesfully.\n";
-        }
-        else if(choice==2){
             int expid;
             double amt;
             string desc,paidBy;
@@ -220,13 +213,13 @@ int main(){
             cout<<"Expense Added Successfully\n";
 
         }
-        else if(choice==3){
+        else if(choice==2){
             manager.viewExpenses(viewer);
         }
-        else if(choice==4){
+        else if(choice==3){
             manager.showBalance();
         }
-        else if(choice==5){
+        else if(choice==4){
             cout<<"Exiting Program...";
             break;
         }
