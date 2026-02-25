@@ -67,36 +67,41 @@ class ExpenseViewer{
             }
         }
 };
-class ExpenseManager{
-    private:
-        vector<User> users;
-        vector<Expense> expenseList;
-        unordered_map<string,unordered_map<string,double>> balances;
 
+class SplitLogic{
     public:
-        void addUser(int id,string name){
-            users.push_back(User(id,name));
-        }
-        void addExpense(int expid,string desc,double amt,string paidby,vector<string> participants){
+        virtual unordered_map<string,double>split(double amt,vector<string>& participants)=0;
 
-            if(participants.empty() || amt==0){
-                return;
-            }
-            expenseList.push_back(Expense(expid,desc,amt,paidby,participants));
-            double share=amt/participants.size();
-            for(auto mem:participants){
-                if(mem==paidby) continue;
-                balances[mem][paidby]+=share;
-            }
+};
 
-            ofstream file("expenses.txt",ios::app);
-            file<<expid<<","<<desc<<","<<amt<<","<<paidby;
-            for(auto mem:participants){
-                file<<","<<mem;
+class EqualSplitLogic: public SplitLogic{
+    public:
+        unordered_map<string,double> split(double amt,vector<string>& participants){
+            unordered_map<string,double> result;
+            double eachshare=amt/participants.size();
+            
+            for(auto member:participants){
+                result[member]=eachshare;
             }
-            file<<endl;
-            file.close();
+            return result;
         }
+};
+
+class BalanceData{
+    private:
+        unordered_map<string,unordered_map<string,double>> balances;
+    public:
+        void updateBalance(string payee,unordered_map<string,double>& splitdata){
+            for(auto& data:splitdata){
+                string user=data.first;
+                double amt=data.second;
+
+                if(user==payee) continue;
+
+                balances[user][payee]+=amt;
+            }
+        }
+
         void showBalance(){
             if(balances.empty()){
                 cout<<"All Settled! \n";
@@ -107,6 +112,55 @@ class ExpenseManager{
                     cout<< debtor.first<<" HAS TO PAY Rs."<< creditor.second<<" TO "<< creditor.first<<endl;
                 }
             }
+        }
+
+};
+class ExpenseManager{
+    private:
+        vector<User> users;
+        vector<Expense> expenseList;
+        BalanceData balanceSheet;
+
+    public:
+        void addUser(int id,string name){
+            users.push_back(User(id,name));
+        }
+        void addExpense(
+            Expense& exp,
+            SplitLogic* strategy){
+
+            // store expense
+            expenseList.push_back(exp);
+
+            // calculate split
+            auto splits =
+                strategy->split(
+                    exp.getAmount(),
+                    exp.getParticipants()
+                );
+
+            // update balances
+            balanceSheet.updateBalance(
+                exp.getPaidBy(),
+                splits
+            );
+
+            // save to file
+            ofstream file("expenses.txt",ios::app);
+
+            file<<exp.getexpenseId()<<","
+                <<exp.getDescription()<<","
+                <<exp.getAmount()<<","
+                <<exp.getPaidBy();
+
+            for(const auto& p :
+                exp.getParticipants())
+                file<<","<<p;
+
+            file<<"\n";
+        }
+        void showBalance(){
+            balanceSheet.showBalance();
         }
         vector<Expense>& getExpenses(){
             return expenseList;
@@ -119,11 +173,12 @@ class ExpenseManager{
 int main(){
     ExpenseManager manager;
     ExpenseViewer viewer;
+    EqualSplitLogic equalSplit;
 
     int choice;
     while(true){
         cout<<"\n 1. Add User \n 2. Add Expense \n 3. Show Expense \n 4. Show Balance \n 5. Exit\n";
-        cout<<"ENTER CHOICE: \n";
+        cout<<"ENTER CHOICE: ";
         cin>>choice;
 
         if(choice==1){
@@ -160,7 +215,8 @@ int main(){
                 cin>>name;
                 participants.push_back(name);
             }
-            manager.addExpense(expid,desc,amt,paidBy,participants);
+            Expense exp(expid,desc,amt,paidBy,participants);
+            manager.addExpense(exp,&equalSplit);
             cout<<"Expense Added Successfully\n";
 
         }
@@ -178,4 +234,3 @@ int main(){
 
     return 0;
 }
-
