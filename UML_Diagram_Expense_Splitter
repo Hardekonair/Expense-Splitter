@@ -1,0 +1,61 @@
++----------------------+
+|        User          |
++----------------------+
+| - id : int           |
+| - name : string      |
++----------------------+
+| + User(int,string)   |
+| + getId() : int      |
+| + getName() : string |
++----------------------+
+
+
++--------------------------------------+
+|               Expense                |
++--------------------------------------+
+| - expenseId : int                    |
+| - description : string               |
+| - amount : double                    |
+| - paidBy : string                    |
+| - participants : vector<string>      |
++--------------------------------------+
+| + Expense(int,string,double,string,  |
+|           vector<string>&)           |
+| + getexpenseId() : int               |
+| + getDescription() : string          |
+| + getAmount() : double               |
+| + getPaidBy() : string               |
+| + getParticipants() : vector<string>&|
++--------------------------------------+
+
+
++--------------------------------------+
+|           ExpenseViewer              |
++--------------------------------------+
+| + displayExpenseList(                |
+|   vector<Expense>&) : void           |
++--------------------------------------+
+
+
++--------------------------------------------------+
+|               ExpenseManager                     |
++--------------------------------------------------+
+| - users : vector<User>                           |
+| - expenseList : vector<Expense>                  |
+| - balances : unordered_map<                     |
+|      string, unordered_map<string,double>>       |
++--------------------------------------------------+
+| + addUser(int,string) : void                     |
+| + addExpense(int,string,double,string,           |
+|              vector<string>) : void              |
+| + showBalance() : void                           |
+| + getExpenses() : vector<Expense>&               |
+| + viewExpenses(ExpenseViewer&) : void            |
++--------------------------------------------------+
+
+
+Relationships:
+ExpenseManager *-- User
+ExpenseManager *-- Expense
+ExpenseManager ..> ExpenseViewer
+ExpenseViewer ..> Expense
