@@ -67,50 +67,6 @@ class ExpenseViewer{
             }
         }
 };
-
-// class SplitLogic{
-//     public:
-//         virtual unordered_map<string,double>split(double amt,vector<string>& participants)=0;
-
-// };
-
-// class EqualSplitLogic: public SplitLogic{
-//     public:
-//         unordered_map<string,double> split(double amt,vector<string>& participants){
-//             unordered_map<string,double> result;
-//             double eachshare=amt/participants.size();
-            
-//             for(auto member:participants){
-//                 result[member]=eachshare;
-//             }
-//             return result;
-//         }
-// };
-
-// class BalanceData{
-//     private:
-//         unordered_map<string,unordered_map<string,double>> balances;
-//     public:
-//         void updateBalance(string payee,unordered_map<string,double>& splitdata){
-//             for(auto& data:splitdata){
-//                 string user=data.first;
-//                 double amt=data.second;
-
-//                 if(user==payee) continue;
-
-//                 balances[user][payee]+=amt;
-//             }
-//         }
-
-//         void showBalance(){
-//             for(auto debtor:balances){
-//                 for(auto creditor:debtor.second){
-//                     cout<< debtor.first<<" HAS TO PAY Rs."<< creditor.second<<" TO "<< creditor.first<<endl;
-//                 }
-//             }
-//         }
-
-// };
 class ExpenseManager{
     private:
         vector<User> users;
@@ -163,7 +119,6 @@ class ExpenseManager{
 int main(){
     ExpenseManager manager;
     ExpenseViewer viewer;
-    // EqualSplitLogic equalSplit;
 
     int choice;
     while(true){
@@ -223,3 +178,4 @@ int main(){
 
     return 0;
 }
+
